@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxonomie de Bloom Revisée</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #9B7BB8;
+            --red: #E85A5A;
+            --orange: #F5A853;
+            --yellow: #F7DC6F;
+            --green: #6ABF69;
+            --blue: #5DADE2;
+            --bg-cream: #F8F6F1;
+            --text-dark: #2C3E50;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2.5rem 2rem;
+            background: linear-gradient(135deg, #fff 0%, #f0ebe3 100%);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--blue), var(--green), var(--yellow), var(--orange), var(--red), var(--purple));
+        }
+
+        .title-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .title-word {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+            display: inline-block;
+            animation: popIn 0.5s ease-out backwards;
+        }
+
+        .title-word:nth-child(1) { 
+            color: white; 
+            background: linear-gradient(135deg, var(--purple), #7B5B98);
+            animation-delay: 0.1s;
+        }
+        .title-word:nth-child(2) { 
+            color: white; 
+            background: linear-gradient(135deg, var(--red), #C84A4A);
+            animation-delay: 0.2s;
+        }
+        .title-word:nth-child(3) { 
+            color: white; 
+            background: linear-gradient(135deg, var(--orange), #D89030);
+            animation-delay: 0.3s;
+        }
+        .title-word:nth-child(4) { 
+            color: var(--text-dark); 
+            background: linear-gradient(135deg, var(--yellow), #E8CC5F);
+            animation-delay: 0.4s;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: #666;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .subtitle-icon {
+            display: inline-block;
+            margin: 0 0.3rem;
+        }
+
+        .tile {
+            margin-bottom: 1rem;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .tile-header {
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .tile-header:hover {
+            filter: brightness(1.05);
+        }
+
+        .tile-header .icon {
+            font-size: 1.5rem;
+            margin-right: 0.8rem;
+        }
+
+        .tile-header .title-group {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .tile-header .arrow {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .tile.open .tile-header .arrow {
+            transform: rotate(180deg);
+        }
+
+        .tile-content {
+            background: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .tile.open .tile-content {
+            max-height: 3000px;
+        }
+
+        .tile-content-inner {
+            padding: 1.5rem;
+        }
+
+        /* Specific tile colors */
+        .tile-intro .tile-header { background: linear-gradient(135deg, #4A4A4A, #2C3E50); }
+        .tile-creer .tile-header { background: linear-gradient(135deg, #8E6AAF, var(--purple)); }
+        .tile-evaluer .tile-header { background: linear-gradient(135deg, #D84545, var(--red)); }
+        .tile-analyser .tile-header { background: linear-gradient(135deg, #E89830, var(--orange)); }
+        .tile-appliquer .tile-header { background: linear-gradient(135deg, #c9a227, #d4ac2b); }
+        .tile-comprendre .tile-header { background: linear-gradient(135deg, #55A855, var(--green)); }
+        .tile-memoriser .tile-header { background: linear-gradient(135deg, #3498DB, var(--blue)); }
+
+
+        h3 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+            color: #555;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #fff3cd 0%, #fff3cd 100%);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border-left: 4px solid;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tile-creer .example-box { border-color: var(--purple); }
+        .tile-evaluer .example-box { border-color: var(--red); }
+        .tile-analyser .example-box { border-color: var(--orange); }
+        .tile-appliquer .example-box { border-color: var(--yellow); }
+        .tile-comprendre .example-box { border-color: var(--green); }
+        .tile-memoriser .example-box { border-color: var(--blue); }
+
+        .example-box strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tile-creer .example-box strong { color: var(--purple); }
+        .tile-evaluer .example-box strong { color: var(--red); }
+        .tile-analyser .example-box strong { color: var(--orange); }
+        .tile-appliquer .example-box strong { color: #c9a227; }
+        .tile-comprendre .example-box strong { color: var(--green); }
+        .tile-memoriser .example-box strong { color: var(--blue); }
+
+        .example-theme {
+            background: linear-gradient(135deg, #f0f7ff, #fff);
+            border: 1px solid #d0e3f7;
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .example-theme .theme-label {
+            font-weight: 700;
+            color: #3498db;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .verbs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .verb-tag {
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .tile-creer .verb-tag { background: var(--purple); }
+        .tile-evaluer .verb-tag { background: var(--red); }
+        .tile-analyser .verb-tag { background: var(--orange); }
+        .tile-appliquer .verb-tag { background: #c9a227; }
+        .tile-comprendre .verb-tag { background: var(--green); }
+        .tile-memoriser .verb-tag { background: var(--blue); }
+
+        .source {
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed #ddd;
+        }
+
+        .source a {
+            color: #666;
+        }
+
+        .image-container {
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: linear-gradient(135deg, #f8f9fa, #fff);
+            border-radius: 12px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 500px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .image-placeholder {
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            padding: 3rem;
+            border-radius: 12px;
+            color: #888;
+            font-style: italic;
+        }
+
+        .programme-ref {
+            background: linear-gradient(135deg, #e8f4fd, #fff);
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .programme-ref h4 {
+            font-size: 0.95rem;
+            color: #17a2b8;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .tile-memoriser .level-badge { background: rgba(93, 173, 226, 0.2); color: #2980b9; }
+        .tile-comprendre .level-badge { background: rgba(106, 191, 105, 0.2); color: #27ae60; }
+        .tile-appliquer .level-badge { background: rgba(247, 220, 111, 0.3); color: #9a7b0a; }
+        .tile-analyser .level-badge { background: rgba(245, 168, 83, 0.2); color: #d35400; }
+        .tile-evaluer .level-badge { background: rgba(232, 90, 90, 0.2); color: #c0392b; }
+        .tile-creer .level-badge { background: rgba(155, 123, 184, 0.2); color: #8e44ad; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 1rem;
+        }
+
+        .footer-main {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-credit {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, #2C3E50, #34495e);
+            color: #fff;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .footer-credit .ai-badge {
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+
+        @media (max-width: 600px) {
+            .title-word { font-size: 1.6rem; }
+            .container { padding: 1rem; }
+            .tile-header { padding: 1rem; font-size: 1rem; }
+            .tile-content-inner { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="title-wrapper">
+                <span class="title-word">Taxonomie</span>
+                <span class="title-word">de</span>
+                <span class="title-word">Bloom</span>
+                <span class="title-word">Revisée</span>
+            </div>
+            <p class="subtitle">
+                <span class="subtitle-icon">🎯</span>
+                Comprendre en 5 minutes un outil incontournable de la pédagogie
+                <span class="subtitle-icon">🎯</span>
+            </p>
+        </header>
+
+        <!-- Tuile 1: Historique et usages -->
+        <div class="tile tile-intro">
+            <div class="tile-header" onclick="toggleTile(this)">
+                <div class="title-group">
+                    <span class="icon">📚</span>
+                    <span>Historique & Usages dans l'éducation</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="tile-content">
+                <div class="tile-content-inner">
+                    <h3>Un cadre né en 1956, révisé en 2001</h3>
+                    <p>Benjamin Bloom et son équipe créent en 1956 une classification des objectifs pédagogiques pour aider les enseignants à formuler des objectifs d'apprentissage clairs et mesurables.</p>
+                    <p>En <span class="highlight">2001</span>, Lorin Anderson (ancien élève de Bloom) et David Krathwohl révisent cette taxonomie : les noms deviennent des <strong>verbes d'action</strong> pour souligner que l'apprentissage est un processus actif, et « Créer » devient le niveau le plus élevé.</p>
+                    
+                    <div class="image-container">
+                        <img src="taxobloom.jpeg" alt="Taxonomie de Bloom Revisée - Pyramide des habiletés cognitives" onerror="this.parentElement.innerHTML='<div class=\'image-placeholder\'>📷 Image taxobloom.jpeg à placer dans le même dossier que ce fichier HTML</div>'">
+                    </div>
+
+                    <h3>Pourquoi c'est utile ?</h3>
+                    <p>Cette taxonomie permet de <strong>concevoir des activités variées</strong> qui sollicitent différents niveaux cognitifs, de <strong>formuler des objectifs précis</strong> et de <strong>différencier</strong> les apprentissages.</p>
+
+                    <div class="programme-ref">
+                        <h4>📋 Dans les programmes français</h4>
+                        <p>Même si la taxonomie n'est pas explicitement citée, les compétences du Socle commun et des programmes reflètent ces habiletés :</p>
+                        <p>• <strong>Cycle 3-4 :</strong> « Pratiquer des démarches scientifiques », « faire preuve d'esprit critique », « analyser un document »</p>
+                        <p>• <strong>Lycée :</strong> « Argumenter », « produire une réflexion personnelle », « concevoir et réaliser un projet »</p>
+                        <p>• <strong>Transversal :</strong> « Mobiliser des connaissances », « résoudre des problèmes », « évaluer ses propres productions »</p>
+                    </div>
+
+                    <div class="source">
+                        <strong>Sources :</strong> Anderson, L.W. & Krathwohl, D.R. (2001). <em>A Taxonomy for Learning, Teaching, and Assessing</em>. Longman. | Krathwohl, D.R. (2002). "A Revision of Bloom's Taxonomy: An Overview". <em>Theory Into Practice</em>, 41(4). | Programmes officiels - Ministère de l'Éducation nationale.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXEMPLE FIL ROUGE : L'EAU -->
+        <!-- Tuile 2: MÉMORISER -->
+        <div class="tile tile-memoriser">
+            <div class="tile-header" onclick="toggleTile(this)">
+                <div class="title-group">
+                    <span class="icon">🧠</span>
+                    <span>MÉMORISER — La base indispensable</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="tile-content">
+                <div class="tile-content-inner">
+                    <span class="level-badge">Niveau 1</span>
+                    <p><strong>Retrouver des connaissances</strong> stockées en mémoire à long terme : faits, définitions, dates, procédures de base. C'est le socle sur lequel tout le reste s'appuie.</p>
+                    
+                    <div class="example-box">
+                        <strong>🌊 Fil rouge : l'eau</strong>
+                        <div class="example-theme">
+                            <span class="theme-label">L'élève...</span>
+                        </div>
+                        <p>Nomme les trois états de l'eau (solide, liquide, gazeux) et définit ce qu'est le cycle de l'eau.</p>
+                    </div>
+
+                    <div class="verbs">
+                        <span class="verb-tag">Reconnaître</span>
+                        <span class="verb-tag">Nommer</span>
+                        <span class="verb-tag">Définir</span>
+                        <span class="verb-tag">Lister</span>
+                        <span class="verb-tag">Identifier</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tuile 3: COMPRENDRE -->
+        <div class="tile tile-comprendre">
+            <div class="tile-header" onclick="toggleTile(this)">
+                <div class="title-group">
+                    <span class="icon">💬</span>
+                    <span>COMPRENDRE — Donner du sens</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="tile-content">
+                <div class="tile-content-inner">
+                    <span class="level-badge">Niveau 2</span>
+                    <p><strong>Construire du sens</strong> à partir d'informations : expliquer avec ses propres mots, interpréter, reformuler, résumer. L'élève montre qu'il a compris, pas seulement retenu.</p>
+                    
+                    <div class="example-box">
+                        <strong>🌊 Fil rouge : l'eau</strong>
+                        <div class="example-theme">
+                            <span class="theme-label">L'élève...</span>
+                        </div>
+                        <p>Explique avec ses propres mots pourquoi l'eau s'évapore quand il fait chaud et résume le trajet d'une goutte d'eau dans le cycle.</p>
+                    </div>
+
+                    <div class="verbs">
+                        <span class="verb-tag">Expliquer</span>
+                        <span class="verb-tag">Résumer</span>
+                        <span class="verb-tag">Interpréter</span>
+                        <span class="verb-tag">Reformuler</span>
+                        <span class="verb-tag">Classer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tuile 4: APPLIQUER -->
+        <div class="tile tile-appliquer">
+            <div class="tile-header" onclick="toggleTile(this)">
+                <div class="title-group">
+                    <span class="icon">🔧</span>
+                    <span>APPLIQUER — Utiliser dans un nouveau contexte</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="tile-content">
+                <div class="tile-content-inner">
+                    <span class="level-badge">Niveau 3</span>
+                    <p><strong>Mettre en œuvre</strong> des connaissances ou procédures dans une situation nouvelle. L'élève passe de la théorie à la pratique et transfère ce qu'il sait.</p>
+                    
+                    <div class="example-box">
+                        <strong>🌊 Fil rouge : l'eau</strong>
+                        <div class="example-theme">
+                            <span class="theme-label">L'élève...</span>
+                        </div>
+                        <p>Utilise ses connaissances sur le cycle de l'eau pour expliquer pourquoi il y a de la buée sur la vitre de la salle de bain après une douche chaude.</p>
+                    </div>
+
+                    <div class="verbs">
+                        <span class="verb-tag">Utiliser</span>
+                        <span class="verb-tag">Résoudre</span>
+                        <span class="verb-tag">Démontrer</span>
+                        <span class="verb-tag">Illustrer</span>
+                        <span class="verb-tag">Exécuter</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tuile 5: ANALYSER -->
+        <div class="tile tile-analyser">
+            <div class="tile-header" onclick="toggleTile(this)">
+                <div class="title-group">
+                    <span class="icon">🔍</span>
+                    <span>ANALYSER — Décomposer pour comprendre</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="tile-content">
+                <div class="tile-content-inner">
+                    <span class="level-badge">Niveau 4</span>
+                    <p><strong>Décortiquer l'information</strong> en ses composantes, identifier les relations de cause à effet, distinguer l'essentiel de l'accessoire. L'élève fait des liens.</p>
+                    
+                    <div class="example-box">
+                        <strong>🌊 Fil rouge : l'eau</strong>
+                        <div class="example-theme">
+                            <span class="theme-label">L'élève...</span>
+                        </div>
+                        <p>Compare la consommation d'eau de différents pays et identifie les facteurs qui expliquent ces différences (climat, niveau de vie, agriculture...).</p>
+                    </div>
+
+                    <div class="verbs">
+                        <span class="verb-tag">Comparer</span>
+                        <span class="verb-tag">Examiner</span>
+                        <span class="verb-tag">Différencier</span>
+                        <span class="verb-tag">Déduire</span>
+                        <span class="verb-tag">Catégoriser</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tuile 6: ÉVALUER -->
+        <div class="tile tile-evaluer">
+            <div class="tile-header" onclick="toggleTile(this)">
+                <div class="title-group">
+                    <span class="icon">⚖️</span>
+                    <span>ÉVALUER — Porter un jugement argumenté</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="tile-content">
+                <div class="tile-content-inner">
+                    <span class="level-badge">Niveau 5</span>
+                    <p><strong>Juger la valeur</strong> d'une idée, d'une méthode ou d'un produit selon des critères définis. C'est l'esprit critique en action : l'élève prend position et argumente.</p>
+                    
+                    <div class="example-box">
+                        <strong>🌊 Fil rouge : l'eau</strong>
+                        <div class="example-theme">
+                            <span class="theme-label">L'élève...</span>
+                        </div>
+                        <p>Évalue l'efficacité de différentes solutions pour économiser l'eau (récupérateur, douche vs bain, arrosage goutte-à-goutte...) et justifie laquelle serait la plus pertinente pour son établissement.</p>
+                    </div>
+
+                    <div class="verbs">
+                        <span class="verb-tag">Juger</span>
+                        <span class="verb-tag">Critiquer</span>
+                        <span class="verb-tag">Justifier</span>
+                        <span class="verb-tag">Argumenter</span>
+                        <span class="verb-tag">Vérifier</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tuile 7: CRÉER -->
+        <div class="tile tile-creer">
+            <div class="tile-header" onclick="toggleTile(this)">
+                <div class="title-group">
+                    <span class="icon">💡</span>
+                    <span>CRÉER — Le niveau le plus élevé</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="tile-content">
+                <div class="tile-content-inner">
+                    <span class="level-badge">Niveau 6</span>
+                    <p><strong>Produire quelque chose de nouveau</strong> en combinant des éléments de manière originale. L'élève devient auteur, concepteur, inventeur. Il mobilise tout ce qu'il a appris.</p>
+                    
+                    <div class="example-box">
+                        <strong>🌊 Fil rouge : l'eau</strong>
+                        <div class="example-theme">
+                            <span class="theme-label">L'élève...</span>
+                        </div>
+                        <p>Conçoit une campagne de sensibilisation à l'économie d'eau pour son collège/lycée : il planifie les actions, crée les supports de communication et organise un événement.</p>
+                    </div>
+
+                    <div class="verbs">
+                        <span class="verb-tag">Concevoir</span>
+                        <span class="verb-tag">Inventer</span>
+                        <span class="verb-tag">Produire</span>
+                        <span class="verb-tag">Planifier</span>
+                        <span class="verb-tag">Composer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="footer-main">Ressource pédagogique — Adaptable à toutes les disciplines</p>
+            <div class="footer-credit">
+                <span>DRANE PACA</span>
+                <span class="ai-badge">✨ Mis en forme avec une IA générative</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTile(header) {
+            const tile = header.parentElement;
+            tile.classList.toggle('open');
+        }
+
+        // Ouvrir la première tuile par défaut
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.tile-intro').classList.add('open');
+        });
+    </script>
+</body>
+</html>
